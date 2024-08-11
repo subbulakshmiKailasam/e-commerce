@@ -1,11 +1,12 @@
 import Promise from "bluebird";
+import { usermodel } from "./src/models/user.models";
 
 var join = Promise.join;
 
 export const providerHelper = {
   save: (newModelData) => {
     return new Promise(function (resolve, reject) {
-      return newModelData.save(function (err, res) {
+      return newModelData.create(function (err, res) {
         if (err) {
           reject(err);
         } else {
@@ -15,11 +16,11 @@ export const providerHelper = {
     });
   },
   findOne: (Model, queryOpts, documentFields) => {
-    return Model.findOneAsync(queryOpts, documentFields);
+    return Model.findOne(queryOpts, documentFields);
   },
 
   checkForDuplicateEntry: (Model, queryOpts) => {
-    return Model.count(queryOpts).execAsync();
+    return Model.estimatedDocumentCount(queryOpts);
   },
   sanitizeUserInput: (req, next) => {
     try {

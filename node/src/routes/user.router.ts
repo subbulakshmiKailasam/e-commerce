@@ -6,7 +6,6 @@ const app = express();
 export const userrouter = express.Router()
 
 userrouter.post('/createUser',function(req,res,next){
-    console.log(req.body)
     userModule.createUser(req,res,next)
 })
 

@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyparser from 'body-parser'
 import {connect}  from './connection'
+import { userrouter } from './src/routes/user.router';
 
 connect();
 const app = express();
@@ -17,6 +18,7 @@ app.use(function(req, res, next) {
 });
  
 app.use(bodyparser.json())
+app.use('/user',userrouter)
 app.post('/api/test', (req, res) => {
   console.log(req.body)
   res.send('test');

@@ -1,14 +1,17 @@
 import { providerHelper } from "../../provider.helper";
-import { usermodel } from "../models/user.models";
+import { usermodel, validate } from "../models/user.models";
 import { IUser } from "../types/user.types";
 import httpStatus from "http-status";
-import Promise from "bluebird";
 import { messageConfig } from "../../api.message.config";
+import bcrypt from "bcrypt";
+import { jwt } from "jsonwebtoken";
 
-function createResponse(response) {
+async function createResponse(response) {
   var newResponse = new usermodel();
+  const salt = await bcrypt.genSalt(10);
+  const password = await bcrypt.hash(response.password, salt);
   newResponse.username = response.username;
-  newResponse.password = response.password;
+  newResponse.password = password;
   newResponse.email = response.email;
   newResponse.phoneno = response.phoneno;
   return newResponse;
@@ -16,10 +19,13 @@ function createResponse(response) {
 
 export const userModule = {
   createUser: (req, res, next) => {
-    console.log("test");
     var query: any = {};
     var modelInfo = providerHelper.sanitizeUserInput(req, next) as IUser;
     query.email = modelInfo.email;
+    const { error } = validate(req.body);
+    if (error) {
+      return res.status(httpStatus.NOT_FOUND).send(error.details[0].message);
+    }
     usermodel
       .find(query)
       .then((response) => {
@@ -33,8 +39,7 @@ export const userModule = {
           usermodel
             .create(newResponse)
             .then((response) => {
-              console.log("test2", newResponse);
-              res.status(httpStatus.OK);
+              res.status(httpStatus.CREATED);
               res.json({
                 message: messageConfig.user.savemessage,
               });
@@ -52,18 +57,31 @@ export const userModule = {
     var query: any = {};
     var modelInfo = providerHelper.sanitizeUserInput(req, next) as IUser;
     query.email = modelInfo.email;
-    query.password = modelInfo.password;
-    return usermodel.find(query)
-      .then((response) => {
-        if (response.length > 0) {
+    return usermodel
+      .findOne(query)
+      .then(async (user) => {
+        if (user) {
+          const token = jwt.sign({ userId: user._id }, "E_COMMERCE", {
+            expiresIn: "1h",
+          });
+          const passwordMatch = await bcrypt.compare(
+            modelInfo.password,
+            user.password
+          );
+          if (!passwordMatch) {
+            return res.status(httpStatus.UNAUTHORIZED).json({
+              success: false,
+              message: messageConfig.user.invalideUser,
+            });
+          }
           res.status(httpStatus.OK);
           res.json({
             success: true,
-            result: response[0],
+            result: user[0],
+            token: token,
           });
         } else {
-          res.status(httpStatus.OK);
-          res.json({
+          return res.status(httpStatus.UNAUTHORIZED).json({
             success: false,
             message: messageConfig.user.invalideUser,
           });

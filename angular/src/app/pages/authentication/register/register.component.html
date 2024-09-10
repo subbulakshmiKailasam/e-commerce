@@ -1,63 +1,93 @@
 <div class="blank-layout-container justify-content-center align-items-center bg-light-primary">
-  <div
-    class="position-relative row w-100 h-100 bg-gredient justify-content-center"
-  >
+  <div class="position-relative row w-100 h-100 bg-gredient justify-content-center">
     <div class="col-lg-4 d-flex align-items-center">
       <mat-card class="cardWithShadow boxed-auth">
         <mat-card-content class="p-32">
           <div class="text-center">
             <a [routerLink]="['/dashboard']">
-              <img
-                src="./assets/images/logos/dark-logo.svg"
-                class="align-middle m-2"
-                alt="logo"
-              />
+              <img src="./assets/images/logos/dark-logo.svg" class="align-middle m-2" alt="logo" />
             </a>
           </div>
+          <div class="error" *ngIf="showError">{{errorMessage}}</div>
 
-        
           <form class="m-t-30" [formGroup]="registerForm">
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-              >Username</mat-label
-            >
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Username</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput  formControlName="uname" />
+              <input matInput formControlName="username" />
             </mat-form-field>
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-              >Email Adddress</mat-label
-            >
+            <span class="error" *ngIf="
+            (registerFormControl.email.touched || submitted) ">
+              <span class="error" *ngIf="
+               
+                registerFormControl.username.errors?.['required']
+              ">
+                Username is required
+              </span>
+            </span>
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Email Adddress</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput type="email" formControlName="email"/>
+              <input matInput type="email" formControlName="email" />
             </mat-form-field>
+            <span class="error" *ngIf="
+              (registerFormControl.email.touched || submitted) ">
+              <span class="error" *ngIf="
+                registerFormControl.email.errors?.['required']
+              ">
+                Email is required
+              </span>
+              <span *ngIf="registerFormControl.email.errors?.['pattern']">
+                Invalid email format </span>
+            </span>
             <!-- password -->
-            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-              >Password</mat-label 
-            >
+            <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Password</mat-label>
             <mat-form-field appearance="outline" class="w-100" color="primary">
-              <input matInput type="password" formControlName="password"/>
+              <input matInput type="password" formControlName="password" />
             </mat-form-field>
-             <!-- Phone no -->
-             <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block"
-             >Phone Number</mat-label
-           >
-           <mat-form-field appearance="outline" class="w-100" color="primary">
-             <input matInput type="number" formControlName="phoneno"/>
-           </mat-form-field>
+            <span class="error" *ngIf="
+            (registerFormControl.email.touched || submitted) ">
+              <span class="error" *ngIf="
+               
+                registerFormControl.password.errors?.['required']
+              ">
+                Password is required
+              </span>
+              <span *ngIf="registerFormControl.password.errors?.['pattern']">
+                Password must contain at least one uppercase letter, one lowercase letter, one number, and one special
+                character.
+              </span>
+            </span>
+            <!-- Phone no -->
+            <ng-container>
+              <mat-label class="mat-subtitle-2 f-s-14 f-w-600 m-b-12 d-block">Phone Number</mat-label>
+              <mat-form-field appearance="outline" class="w-100" color="primary">
+                <input matInput type="text" formControlName="phoneno" />
+              </mat-form-field>
+              <span class="error" *ngIf="
+              (registerFormControl.email.touched || submitted) ">
+                <span class="error" *ngIf="
+               
+                registerFormControl.phoneno.errors?.['required']
+              ">
+                  Phone no is required
+                </span>
 
+                <span class="error" *ngIf="
+               
+                registerFormControl.phoneno.errors?.['maxlength']
+              ">
+                  Phoneno cannot exceed 10 characters.
+                </span>
+              </span>
+            </ng-container>
             <a (click)="sumbitRegisterForm()" mat-flat-button color="primary" class="w-100">
               Sign Up
             </a>
             <!-- input -->
           </form>
-          <span class="d-block f-w-500 text-center m-t-24"
-            >Already have an Account?
+          <span class="d-block f-w-500 text-center m-t-24">Already have an Account?
 
-            <a
-              [routerLink]="['/authentication/login']"
-              class="text-decoration-none text-primary f-w-500 f-s-14"
-            >
-              Sign In</a
-            >
+            <a [routerLink]="['/authentication/login']" class="text-decoration-none text-primary f-w-500 f-s-14">
+              Sign In</a>
           </span>
         </mat-card-content>
       </mat-card>

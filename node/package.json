@@ -4,12 +4,13 @@
     "description": "",
     "main": "dist/app.js",
     "scripts": {
-        "start": "tsc && node dist/app.js",
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "start": "nodemon -e ts  --exec \"npm run myapp\"",
+        "myapp": "tsc -p . && node dist/app.js"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@types/swagger-ui-express": "^4.1.6",
         "bcrypt": "^5.1.1",
         "bluebird": "^3.7.2",
         "body-parser": "^1.20.2",
